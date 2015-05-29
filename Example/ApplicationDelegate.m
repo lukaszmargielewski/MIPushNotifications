@@ -21,8 +21,6 @@
 
 }
 
-@synthesize timestamp_started = _timestamp_started;
-
 #pragma mark - Application delegate:
 
 
