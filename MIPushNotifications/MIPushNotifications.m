@@ -7,7 +7,7 @@
 //
 
 #import "MIPushNotifications.h"
-#import "ActionRequest.h"
+#import "RequestManager.h"
 
 @interface MIPushNotifications()
 
@@ -233,33 +233,24 @@ static MIPushNotifications *sharedInstance = nil;
 #pragma mark - Push handling (mine):
 
 + (void)updatePushStatusWithOurServerForPushToken:(NSString *)pushToken{
-    
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        
-        // production
-        // development
-        // enterprise
-        NSString *cert_name = @"production";
-        
+    // production
+    // development
+    // enterprise
+    NSString *cert_name = @"production";
+
 #ifdef DEVELOPMENT
-        cert_name = @"development";
+    cert_name = @"development";
 #endif
-        
-        NSString *cert_bid = [[[NSBundle mainBundle] infoDictionary] valueForKeyPath:@"CFBundleIdentifier"];
-        
-        ActionRequest *action = [ActionRequest action:@"push" forClient:nil];
-        BOOL isregistered = ([[NSUserDefaults standardUserDefaults] valueForKey:PUSH_DEVICE_TOKEN_KEY]);
-        [action addParameters:@{@"register" : @(isregistered), @"cert_name" : cert_name, @"cert_app_id" : cert_bid}];
-        
-        if (!isregistered && pushToken) {
-            [action addParameters:@{PUSH_DEVICE_TOKEN_KEY : pushToken}];
-        }
-        NSDictionary *response = [action synchronyousRequest];
-        
-        
-        //DLog(@"\n\nPUSH REGISTRATION REQUEST:\n%@\n\nRESPONSE:\n%@", action.requestDictionary, response);
-    });
-    
+
+    NSString *cert_bid = [[[NSBundle mainBundle] infoDictionary] valueForKeyPath:@"CFBundleIdentifier"];
+
+    ActionRequest *action = [ActionRequest action:@"push" forClient:nil];
+    BOOL isregistered = ([[NSUserDefaults standardUserDefaults] valueForKey:PUSH_DEVICE_TOKEN_KEY]);
+    [action addParameters:@{@"register" : @(isregistered), @"cert_name" : cert_name, @"cert_app_id" : cert_bid}];
+    if (!isregistered && pushToken) {
+        [action addParameters:@{PUSH_DEVICE_TOKEN_KEY : pushToken}];
+    }
+    [[RequestManager rm] startAction:action];
 }
 
 
