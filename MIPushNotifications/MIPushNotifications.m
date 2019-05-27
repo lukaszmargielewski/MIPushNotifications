@@ -210,23 +210,16 @@ static MIPushNotifications *sharedInstance = nil;
 
 #pragma mark - Push, receiving notifications:
 
-+ (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo{
-    
++ (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo {
     NSTimeInterval tNow = [[NSDate date] timeIntervalSince1970];
     NSTimeInterval secondsAfterForergound = tNow - sharedInstance.timestamp_foreground;
-    
     //DLog(@"Received notification secondsAfterForergound:%f %@",secondsAfterForergound, userInfo);
     [MIPushNotifications handleMessageFromRemoteNotification:userInfo receivedWhileInForeground:(secondsAfterForergound > 1)];
     
 }
 
-
 + (void)handleMessageFromRemoteNotification:(NSDictionary*)userInfo receivedWhileInForeground:(BOOL)receivedWhileInForeground{
-    
     [sharedInstance.delegate handleRemoteNotificationWithPayload:userInfo receivedWhileInForeground:receivedWhileInForeground];
-    
-
-    
 }
 
 
